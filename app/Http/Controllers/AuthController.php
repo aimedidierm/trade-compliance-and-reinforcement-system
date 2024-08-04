@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +21,11 @@ class AuthController extends Controller
         if ($user != null) {
             $passwordMatch = Hash::check($password, $user->password);
             if ($passwordMatch) {
+                if ($user->status === UserStatus::PENDING->value) {
+                    return redirect(route('login'))->withErrors('Your account is pending');
+                } elseif ($user->status === UserStatus::REJECTED->value) {
+                    return redirect(route('login'))->withErrors('Your account had been rejected');
+                }
 
                 Auth::login($user);
                 if ($user->role == UserRole::SELLER->value) {
@@ -46,5 +53,27 @@ class AuthController extends Controller
         } else {
             return back();
         }
+    }
+
+    public function register(RegisterRequest $request)
+    {
+        $userStatus = $request->input('role') === UserRole::SELLER->value
+            ? UserStatus::APPROVED->value
+            : UserStatus::PENDING->value;
+
+        User::create([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => bcrypt($request->input('email')),
+            'role' => $request->input('role'),
+            'status' => $userStatus,
+        ]);
+
+
+
+        session(['success' => 'Account created successfully.']);
+
+
+        return redirect()->route('login');
     }
 }

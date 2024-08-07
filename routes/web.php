@@ -34,7 +34,11 @@ Route::group(["prefix" => "minicom", "as" => "minicom.", 'middleware' => Minicom
     Route::view('/', 'minicom.dashboard');
     Route::view('/documents', 'minicom.documents');
     Route::get('/users', [ExportersController::class, 'index']);
+    Route::get('/users/delete/{id}', [ExportersController::class, 'destroy']);
+    Route::get('/users/reject/{id}', [ExportersController::class, 'reject']);
+    Route::get('/users/approve/{id}', [ExportersController::class, 'approve']);
     Route::get('/users/sellers', [SellersController::class, 'index']);
+    Route::get('/users/sellers/delete/{id}', [SellersController::class, 'destroy']);
     Route::view('/training', 'minicom.training');
     Route::view('/products', 'minicom.product.sales');
     Route::view('/products/reporting', 'minicom.product.reporting');

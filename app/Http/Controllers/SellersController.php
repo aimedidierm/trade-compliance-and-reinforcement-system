@@ -13,7 +13,7 @@ class SellersController extends Controller
      */
     public function index()
     {
-        $users = User::where('role', UserRole::SELLER->value)->get();
+        $users = User::where('role', UserRole::SELLER->value)->paginate(10);
         return view('minicom.sellers-management', compact('users'));
     }
 
@@ -62,6 +62,13 @@ class SellersController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::find($id);
+        if ($user) {
+            $user->delete();
+            session(['success' => 'User deleted successfully.']);
+            return redirect('/minicom/users/sellers');
+        } else {
+            return redirect('/minicom/users/sellers')->withErrors('User not found');
+        }
     }
 }

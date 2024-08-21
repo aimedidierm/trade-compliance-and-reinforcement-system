@@ -52,7 +52,6 @@
                     </svg>
                 </button>
             </div>
-            @php session()->flush() @endphp
             @endif
             <table class="min-w-full bg-white">
                 <thead>

@@ -50,7 +50,6 @@
                 </svg>
             </button>
         </div>
-        @php session()->flush() @endphp
         @endif
         <form method="POST" action="/auth/login">
             @csrf

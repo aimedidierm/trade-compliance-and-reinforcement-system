@@ -70,10 +70,6 @@ class AuthController extends Controller
         ]);
 
 
-
-        session(['success' => 'Account created successfully.']);
-
-
-        return redirect()->route('login');
+        return redirect()->route('login')->with('success', 'Account created successfully.');
     }
 }

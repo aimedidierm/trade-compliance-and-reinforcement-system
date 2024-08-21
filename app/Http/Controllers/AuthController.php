@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\ProfileRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -71,5 +72,27 @@ class AuthController extends Controller
 
 
         return redirect()->route('login')->with('success', 'Account created successfully.');
+    }
+
+    public function profile(ProfileRequest $request)
+    {
+        $passwordMatch = Hash::check($request->input('current_password'), Auth::user()->password);
+        if ($passwordMatch) {
+            $user = User::find(Auth::id());
+            $user->password = bcrypt($request->input('password'));
+            $user->update();
+
+            if (Auth::user()->role == UserRole::MINICOM->value) {
+                return redirect('/minicom/settings')->with('success', 'Password changed');
+            } else {
+                # code...
+            }
+        } else {
+            if (Auth::user()->role == UserRole::MINICOM->value) {
+                return redirect('/minicom/settings')->withErrors('Incorrect current password');
+            } else {
+                # code...
+            }
+        }
     }
 }

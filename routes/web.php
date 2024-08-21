@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ExportersController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SellersController;
 use App\Http\Middleware\ExporterMiddleware;
 use App\Http\Middleware\MinicomMiddleware;
@@ -16,7 +17,10 @@ Route::group(["prefix" => "auth", "as" => "auth."], function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth');
+    Route::post('/settings', [AuthController::class, 'profile']);
 });
+
+Route::get('/notifications', [NotificationController::class, 'index'])->middleware('auth');
 
 Route::group(["prefix" => "seller", "as" => "seller.", 'middleware' => SellerMiddleware::class], function () {
     Route::get('/', function () {

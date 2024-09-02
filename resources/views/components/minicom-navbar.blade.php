@@ -24,14 +24,14 @@
                     </span>
                     <span class="flex-1 ml-1 whitespace-nowrap">Users</span>
                 </a>
-                {{-- <a href="/minicom/training"
+                <a href="/minicom/training"
                     class="flex breadcrumb-item {{ request()->is('minicom/training') ? 'text-orange-400' : 'text-gray-500' }}">
                     <span class="material-symbols-outlined">
                         videocam
                     </span>
                     <span class="flex-1 ml-1 whitespace-nowrap">Training</span>
                 </a>
-                <a href="/minicom/products"
+                {{--<a href="/minicom/products"
                     class="flex breadcrumb-item {{ request()->is('minicom/products') || request()->is('minicom/products/reporting') || request()->is('minicom/products/declaration') ? 'text-orange-400' : 'text-gray-500' }}">
                     <span class="material-symbols-outlined">
                         package_2
@@ -107,91 +107,107 @@
 </header>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-    const notificationIcon = document.getElementById("notificationIcon");
-    const notificationPanel = document.getElementById("notificationPanel");
-    const notificationContainer = notificationPanel.querySelector(".max-h-96");
-    
-    // Function to fetch notifications from an API endpoint
-    async function fetchNotifications() {
-    try {
-    const response = await fetch("/notifications");
-    if (!response.ok) {
-    throw new Error("Failed to fetch notifications");
-    }
-    const data = await response.json();
-    
-    // Clear existing notifications
-    notificationContainer.innerHTML = '';
-    
-    // Populate notifications dynamically
-    data.notifications.forEach(notification => {
-    const notificationItem = document.createElement("div");
-    notificationItem.classList.add("p-4", "border-b", "flex", "items-center");
-    
-    // Image or icon
-    const img = document.createElement("img");
-    img.src = "/images/message.png";
-    img.alt = "PDF";
-    img.classList.add("w-10", "h-10", "mr-3");
-    
-    // Notification content
-    const content = document.createElement("div");
-    content.classList.add("text-sm");
-    const title = document.createElement("p");
-    title.classList.add("font-semibold");
-    title.textContent = notification.title;
-    const message = document.createElement("p");
-    message.textContent = notification.message;
-    
-    // Time ago
-    const timeAgo = document.createElement("span");
-    timeAgo.classList.add("text-xs", "text-gray-400", "ml-auto");
-    timeAgo.textContent = `${notification.created_at} ago`;
-    
-    content.appendChild(title);
-    content.appendChild(message);
-    notificationItem.appendChild(img);
-    notificationItem.appendChild(content);
-    notificationItem.appendChild(timeAgo);
-    
-    notificationContainer.appendChild(notificationItem);
-    });
-    } catch (error) {
-    console.error("Error loading notifications:", error);
-    }
-    }
-    
-    // Show/hide the notification panel
-    notificationIcon.addEventListener("click", async () => {
-    if (notificationPanel.classList.contains("hidden")) {
-    await fetchNotifications(); // Load notifications when opening the panel
-    
-    notificationPanel.classList.remove("hidden");
-    notificationPanel.classList.add("opacity-0", "scale-95");
-    
-    setTimeout(() => {
-    notificationPanel.classList.remove("opacity-0", "scale-95");
-    notificationPanel.classList.add("opacity-100", "scale-100");
-    }, 50);
-    } else {
-    notificationPanel.classList.add("opacity-0", "scale-95");
-    
-    setTimeout(() => {
-    notificationPanel.classList.add("hidden");
-    notificationPanel.classList.remove("opacity-100", "scale-100");
-    }, 150);
-    }
-    });
-    
-    document.addEventListener("click", (event) => {
-    if (!notificationIcon.contains(event.target) && !notificationPanel.contains(event.target)) {
-    notificationPanel.classList.add("opacity-0", "scale-95");
-    
-    setTimeout(() => {
-    notificationPanel.classList.add("hidden");
-    notificationPanel.classList.remove("opacity-100", "scale-100");
-    }, 150);
-    }
-    });
+        const notificationIcon = document.getElementById("notificationIcon");
+        const notificationPanel = document.getElementById("notificationPanel");
+        const notificationContainer = notificationPanel.querySelector(".max-h-96");
+        
+        // Function to format date as "YYYY-MM-DD HH:MM"
+        function formatDateTime(dateString) {
+            const date = new Date(dateString);
+            const formatter = new Intl.DateTimeFormat('en-GB', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false // 24-hour format
+            });
+            const [{ value: day }, , { value: month }, , { value: year }] = formatter.formatToParts(date);
+            const [{ value: hour }, , { value: minute }] = formatter.formatToParts(new Date(date.setMinutes(date.getMinutes() - date.getTimezoneOffset())));
+            return `${year}-${month}-${day} ${hour}:${minute}`;
+        }
+
+        // Function to fetch notifications from an API endpoint
+        async function fetchNotifications() {
+            try {
+                const response = await fetch("/notifications");
+                if (!response.ok) {
+                    throw new Error("Failed to fetch notifications");
+                }
+                const data = await response.json();
+                
+                // Clear existing notifications
+                notificationContainer.innerHTML = '';
+                
+                // Populate notifications dynamically
+                data.notifications.forEach(notification => {
+                    const notificationItem = document.createElement("div");
+                    notificationItem.classList.add("p-4", "border-b", "flex", "items-center");
+                    
+                    // Image or icon
+                    const img = document.createElement("img");
+                    img.src = "/images/message.png";
+                    img.alt = "PDF";
+                    img.classList.add("w-10", "h-10", "mr-3");
+                    
+                    // Notification content
+                    const content = document.createElement("div");
+                    content.classList.add("text-sm");
+                    const title = document.createElement("p");
+                    title.classList.add("font-semibold");
+                    title.textContent = notification.title;
+                    const message = document.createElement("p");
+                    message.textContent = notification.message;
+                    
+                    // Time ago
+                    const timeAgo = document.createElement("span");
+                    timeAgo.classList.add("text-xs", "text-gray-400", "ml-auto");
+                    timeAgo.textContent = formatDateTime(notification.created_at);
+                    
+                    content.appendChild(title);
+                    content.appendChild(message);
+                    notificationItem.appendChild(img);
+                    notificationItem.appendChild(content);
+                    notificationItem.appendChild(timeAgo);
+                    
+                    notificationContainer.appendChild(notificationItem);
+                });
+            } catch (error) {
+                console.error("Error loading notifications:", error);
+            }
+        }
+        
+        // Show/hide the notification panel
+        notificationIcon.addEventListener("click", async () => {
+            if (notificationPanel.classList.contains("hidden")) {
+                await fetchNotifications(); // Load notifications when opening the panel
+                
+                notificationPanel.classList.remove("hidden");
+                notificationPanel.classList.add("opacity-0", "scale-95");
+                
+                setTimeout(() => {
+                    notificationPanel.classList.remove("opacity-0", "scale-95");
+                    notificationPanel.classList.add("opacity-100", "scale-100");
+                }, 50);
+            } else {
+                notificationPanel.classList.add("opacity-0", "scale-95");
+                
+                setTimeout(() => {
+                    notificationPanel.classList.add("hidden");
+                    notificationPanel.classList.remove("opacity-100", "scale-100");
+                }, 150);
+            }
+        });
+        
+        document.addEventListener("click", (event) => {
+            if (!notificationIcon.contains(event.target) && !notificationPanel.contains(event.target)) {
+                notificationPanel.classList.add("opacity-0", "scale-95");
+                
+                setTimeout(() => {
+                    notificationPanel.classList.add("hidden");
+                    notificationPanel.classList.remove("opacity-100", "scale-100");
+                }, 150);
+            }
+        });
     });
 </script>

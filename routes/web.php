@@ -4,9 +4,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ExportersController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SellersController;
+use App\Http\Controllers\TrainingController;
 use App\Http\Middleware\ExporterMiddleware;
 use App\Http\Middleware\MinicomMiddleware;
 use App\Http\Middleware\SellerMiddleware;
+use App\Models\Training;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'landing');
@@ -43,7 +45,11 @@ Route::group(["prefix" => "minicom", "as" => "minicom.", 'middleware' => Minicom
     Route::get('/users/approve/{id}', [ExportersController::class, 'approve']);
     Route::get('/users/sellers', [SellersController::class, 'index']);
     Route::get('/users/sellers/delete/{id}', [SellersController::class, 'destroy']);
-    Route::view('/training', 'minicom.training');
+    Route::resource('/training', TrainingController::class)->only('index', 'store', 'destroy');
+    Route::get('/training-details/{id}', function ($id) {
+        $training = Training::find($id);
+        return view('minicom.training-details', ['src' => $training->src]);
+    });
     Route::view('/products', 'minicom.product.sales');
     Route::view('/products/reporting', 'minicom.product.reporting');
     Route::view('/products/declaration', 'minicom.product.declaration');

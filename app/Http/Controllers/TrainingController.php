@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TrainingRequest;
 use App\Models\Training;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class TrainingController extends Controller
 {
@@ -12,54 +14,43 @@ class TrainingController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $trainings = Training::paginate(10);
+        return view('minicom.training', compact('trainings'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TrainingRequest $request)
     {
-        //
-    }
+        $uniqueid = uniqid();
+        $extension = $request->file('file')->getClientOriginalExtension();
+        $filename = Carbon::now()->format('Ymd') . '_' . $uniqueid . '.' . $extension;
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Training $training)
-    {
-        //
-    }
+        $path = $request->file('file')->storeAs('files', $filename, 'public');
+        $fileUrl = Storage::url($path);
+        $fileUrl = Storage::url('sample.mp4');
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Training $training)
-    {
-        //
-    }
+        Training::create([
+            "title" => $request->input('title'),
+            "description" => $request->input('description'),
+            "src" => $fileUrl,
+        ]);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Training $training)
-    {
-        //
+        return redirect('/minicom/training')->with('success', 'Training created');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Training $training)
+    public function destroy(string $id)
     {
-        //
+        $training = Training::find($id);
+        if ($training) {
+            $training->delete();
+            return redirect('/minicom/training')->with('success', 'Training deleted successfully.');
+        } else {
+            return redirect('/minicom/training')->withErrors('Training not found');
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 @section('content')
 
-<x-seller-navbar />
+<x-exporter-navbar />
 
 
 <main class="container mx-auto py-8 px-6">
@@ -23,7 +23,7 @@
                 <tr>
                     <td class="py-2 px-4 border-b">{{$training->title}}</td>
                     <td class="py-2 px-4 border-b">{{$training->description}}</td>
-                    <td class="py-2 px-4 border-b"><a href="/seller/training-details/{{$training->id}}"
+                    <td class="py-2 px-4 border-b"><a href="/exporter/training-details/{{$training->id}}"
                             class="text-blue-500 hover:underline">click here</a>
                     </td>
                 </tr>

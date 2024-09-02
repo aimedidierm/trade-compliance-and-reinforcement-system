@@ -28,11 +28,23 @@ Route::group(["prefix" => "seller", "as" => "seller.", 'middleware' => SellerMid
     Route::get('/', function () {
         return "Welcome Seller!";
     });
+    Route::view('/settings', 'auth.settings');
+    Route::resource('/training', TrainingController::class)->only('index');
+    Route::get('/training-details/{id}', function ($id) {
+        $training = Training::find($id);
+        return view('seller.training-details', ['src' => $training->src]);
+    });
 });
 
 Route::group(["prefix" => "exporter", "as" => "exporter.", 'middleware' => ExporterMiddleware::class], function () {
     Route::get('/', function () {
         return "Welcome Exporter!";
+    });
+    Route::view('/settings', 'auth.settings');
+    Route::resource('/training', TrainingController::class)->only('index');
+    Route::get('/training-details/{id}', function ($id) {
+        $training = Training::find($id);
+        return view('seller.training-details', ['src' => $training->src]);
     });
 });
 

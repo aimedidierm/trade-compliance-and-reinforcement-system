@@ -84,14 +84,18 @@ class AuthController extends Controller
 
             if (Auth::user()->role == UserRole::MINICOM->value) {
                 return redirect('/minicom/settings')->with('success', 'Password changed');
+            } elseif (Auth::user()->role == UserRole::SELLER->value) {
+                return redirect('/seller/settings')->with('success', 'Password changed');
             } else {
-                # code...
+                return redirect('/exporter/settings')->with('success', 'Password changed');
             }
         } else {
             if (Auth::user()->role == UserRole::MINICOM->value) {
                 return redirect('/minicom/settings')->withErrors('Incorrect current password');
+            } elseif (Auth::user()->role == UserRole::SELLER->value) {
+                return redirect('/seller/settings')->withErrors('Incorrect current password');
             } else {
-                # code...
+                return redirect('/exporter/settings')->with('success', 'Password changed');
             }
         }
     }

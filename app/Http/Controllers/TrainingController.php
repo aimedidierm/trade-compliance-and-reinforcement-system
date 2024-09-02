@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
 use App\Http\Requests\TrainingRequest;
 use App\Models\Training;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class TrainingController extends Controller
@@ -15,7 +17,13 @@ class TrainingController extends Controller
     public function index()
     {
         $trainings = Training::paginate(10);
-        return view('minicom.training', compact('trainings'));
+        if (Auth::user()->role == UserRole::MINICOM->value) {
+            return view('minicom.training', compact('trainings'));
+        } elseif (Auth::user()->role == UserRole::SELLER->value) {
+            return view('seller.training', compact('trainings'));
+        } else {
+            return view('exporter.training', compact('trainings'));
+        }
     }
 
     /**

@@ -1,13 +1,7 @@
 @extends('layout')
 
 @section('content')
-@if (Auth::user()->role == \App\Enums\UserRole::EXPORTER->value)
-<x-exporter-navbar />
-@elseif(Auth::user()->role == \App\Enums\UserRole::MINICOM->value)
 <x-minicom-navbar />
-@else
-<x-seller-navbar />
-@endif
 
 
 <main class="container mx-auto py-8 px-6">

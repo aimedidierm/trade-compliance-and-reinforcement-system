@@ -3,14 +3,14 @@
         <div class="text-2xl font-bold">TCARS</div>
         <div class="flex items-center">
             <nav class="flex space-x-4">
-                {{-- <a href="/minicom"
-                    class="flex breadcrumb-item {{ request()->is('minicom') ? 'text-orange-400' : 'text-gray-500' }}">
+                <a href="/seller"
+                    class="flex breadcrumb-item {{ request()->is('seller') ? 'text-orange-400' : 'text-gray-500' }}">
                     <span class="material-symbols-outlined">
                         dashboard
                     </span>
                     <span class="flex-1 ml-1 whitespace-nowrap">Home</span>
                 </a>
-                <a href="/minicom/documents"
+                {{--<a href="/minicom/documents"
                     class="flex breadcrumb-item {{ request()->is('minicom/documents') ? 'text-orange-400' : 'text-gray-500' }}">
                     <span class="material-symbols-outlined">
                         receipt_long

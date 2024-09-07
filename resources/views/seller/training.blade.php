@@ -4,7 +4,6 @@
 
 <x-seller-navbar />
 
-
 <main class="container mx-auto py-8 px-6">
     <div class="card">
         <div class="flex justify-between items-center mb-4">

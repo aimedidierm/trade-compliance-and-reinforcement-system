@@ -25,9 +25,7 @@ Route::group(["prefix" => "auth", "as" => "auth."], function () {
 Route::get('/notifications', [NotificationController::class, 'index'])->middleware('auth');
 
 Route::group(["prefix" => "seller", "as" => "seller.", 'middleware' => SellerMiddleware::class], function () {
-    Route::get('/', function () {
-        return "Welcome Seller!";
-    });
+    Route::view('/', 'seller.rules');
     Route::view('/settings', 'auth.settings');
     Route::resource('/training', TrainingController::class)->only('index');
     Route::get('/training-details/{id}', function ($id) {

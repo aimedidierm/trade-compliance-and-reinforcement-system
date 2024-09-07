@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\DocumentStatus;
+use App\Enums\UserRole;
+use App\Http\Requests\DocumentRequest;
 use App\Models\Document;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class DocumentController extends Controller
 {
@@ -12,54 +17,48 @@ class DocumentController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        if (Auth::user()->role == UserRole::SELLER->value) {
+            $documents = Document::latest()->where('user_id', Auth::id())->paginate(10);
+            return view('seller.documents', compact('documents'));
+        } else {
+            # code...
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(DocumentRequest $request)
     {
-        //
-    }
+        $uniqueid = uniqid();
+        $extension = $request->file('file')->getClientOriginalExtension();
+        $filename = Carbon::now()->format('Ymd') . '_' . $uniqueid . '.' . $extension;
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Document $document)
-    {
-        //
-    }
+        $path = $request->file('file')->storeAs('files', $filename, 'public');
+        $fileUrl = Storage::url($path);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Document $document)
-    {
-        //
-    }
+        Document::create([
+            "name" => $request->input('name'),
+            "type" => $request->input('type'),
+            "src" => $fileUrl,
+            "status" => DocumentStatus::PENDING->value,
+            "user_id" => Auth::id(),
+        ]);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Document $document)
-    {
-        //
+        return redirect('/seller/documents')->with('success', 'Document submitted');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Document $document)
+    public function destroy(string $id)
     {
-        //
+        $document = Document::find($id);
+        if ($document) {
+            $document->delete();
+            return redirect('/seller/documents')->with('success', 'Document deleted successfully.');
+        } else {
+            return redirect('/seller/documents')->withErrors('Document not found');
+        }
     }
 }

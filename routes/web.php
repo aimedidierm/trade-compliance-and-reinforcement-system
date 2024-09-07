@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ExportersController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SellersController;
@@ -32,6 +33,7 @@ Route::group(["prefix" => "seller", "as" => "seller.", 'middleware' => SellerMid
         $training = Training::find($id);
         return view('seller.training-details', ['src' => $training->src]);
     });
+    Route::resource('/documents', DocumentController::class)->only('index', 'store', 'destroy');
 });
 
 Route::group(["prefix" => "exporter", "as" => "exporter.", 'middleware' => ExporterMiddleware::class], function () {

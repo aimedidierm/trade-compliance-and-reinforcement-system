@@ -15,11 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('src');
-            $table->unsignedBigInteger("product_id");
-            $table->foreign("product_id")->on("products")->references("id");
-            $table->boolean('applied');
-            $table->string('sn');
-            $table->string('s_mark');
+            $table->string('type');
+            $table->string('status');
             $table->unsignedBigInteger("user_id");
             $table->foreign("user_id")->on("users")->references("id");
             $table->timestamps();

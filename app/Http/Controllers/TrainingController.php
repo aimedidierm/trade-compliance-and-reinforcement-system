@@ -37,7 +37,6 @@ class TrainingController extends Controller
 
         $path = $request->file('file')->storeAs('files', $filename, 'public');
         $fileUrl = Storage::url($path);
-        $fileUrl = Storage::url('sample.mp4');
 
         Training::create([
             "title" => $request->input('title'),

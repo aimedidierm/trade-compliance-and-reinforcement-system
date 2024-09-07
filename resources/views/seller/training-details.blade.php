@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Player with Tailwind CSS</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.0/dist/tailwind.min.css" rel="stylesheet">
+    <title>Video Player</title>
+    @vite(['resources/css/app.css','resources/js/app.js'])
     <style>
         body {
             font-family: 'Arial', sans-serif;

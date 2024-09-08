@@ -20,8 +20,14 @@ class DocumentController extends Controller
         if (Auth::user()->role == UserRole::SELLER->value) {
             $documents = Document::latest()->where('user_id', Auth::id())->paginate(10);
             return view('seller.documents', compact('documents'));
+        } elseif (Auth::user()->role == UserRole::EXPORTER->value) {
+            $documents = Document::latest()->where('status', DocumentStatus::APPROVED->value)->paginate(10);
+            $documents->load('user');
+            return view('exporter.documents', compact('documents'));
         } else {
-            # code...
+            $documents = Document::latest()->paginate(10);
+            $documents->load('user');
+            return view('minicom.documents', compact('documents'));
         }
     }
 
@@ -59,6 +65,36 @@ class DocumentController extends Controller
             return redirect('/seller/documents')->with('success', 'Document deleted successfully.');
         } else {
             return redirect('/seller/documents')->withErrors('Document not found');
+        }
+    }
+
+    /**
+     * Update the specified resource from storage.
+     */
+    public function reject(string $id)
+    {
+        $document = Document::find($id);
+        if ($document) {
+            $document->status = DocumentStatus::REJECTED->value;
+            $document->update();
+            return redirect('/minicom/documents')->with('success', 'Document rejected successfully.');
+        } else {
+            return redirect('/minicom/documents')->withErrors('Document not found');
+        }
+    }
+
+    /**
+     * Update the specified resource from storage.
+     */
+    public function approve(string $id)
+    {
+        $document = Document::find($id);
+        if ($document) {
+            $document->status = DocumentStatus::APPROVED->value;
+            $document->update();
+            return redirect('/minicom/documents')->with('success', 'Document approved successfully.');
+        } else {
+            return redirect('/minicom/documents')->withErrors('Document not found');
         }
     }
 }

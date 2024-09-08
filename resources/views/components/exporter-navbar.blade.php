@@ -9,14 +9,14 @@
                         dashboard
                     </span>
                     <span class="flex-1 ml-1 whitespace-nowrap">Home</span>
-                </a>
-                <a href="/minicom/documents"
-                    class="flex breadcrumb-item {{ request()->is('minicom/documents') ? 'text-orange-400' : 'text-gray-500' }}">
+                </a> --}}
+                <a href="/exporter/documents"
+                    class="flex breadcrumb-item {{ request()->is('exporter/documents') ? 'text-orange-400' : 'text-gray-500' }}">
                     <span class="material-symbols-outlined">
                         receipt_long
                     </span>
                     <span class="flex-1 ml-1 whitespace-nowrap">Documents</span>
-                </a> --}}
+                </a>
                 <a href="/exporter/training"
                     class="flex breadcrumb-item {{ request()->is('seller/training') ? 'text-orange-400' : 'text-gray-500' }}">
                     <span class="material-symbols-outlined">

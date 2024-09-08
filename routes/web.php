@@ -46,10 +46,13 @@ Route::group(["prefix" => "exporter", "as" => "exporter.", 'middleware' => Expor
         $training = Training::find($id);
         return view('seller.training-details', ['src' => $training->src]);
     });
+    Route::resource('/documents', DocumentController::class)->only('index');
 });
 
 Route::group(["prefix" => "minicom", "as" => "minicom.", 'middleware' => MinicomMiddleware::class], function () {
-    Route::view('/', 'minicom.dashboard');
+    Route::get('/', function () {
+        return "Welcom minicom";
+    });
     Route::view('/documents', 'minicom.documents');
     Route::get('/users', [ExportersController::class, 'index']);
     Route::get('/users/delete/{id}', [ExportersController::class, 'destroy']);
@@ -67,4 +70,7 @@ Route::group(["prefix" => "minicom", "as" => "minicom.", 'middleware' => Minicom
     Route::view('/products/declaration', 'minicom.product.declaration');
     Route::view('/notifications', 'minicom.notifications');
     Route::view('/settings', 'auth.settings');
+    Route::resource('/documents', DocumentController::class)->only('index');
+    Route::get('/documents/approve/{id}', [DocumentController::class, 'approve']);
+    Route::get('/documents/reject/{id}', [DocumentController::class, 'reject']);
 });

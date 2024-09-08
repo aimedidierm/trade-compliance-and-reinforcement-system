@@ -32,7 +32,7 @@ class ExportersController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Update the specified resource from storage.
      */
     public function reject(string $id)
     {
@@ -47,7 +47,7 @@ class ExportersController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Update the specified resource from storage.
      */
     public function approve(string $id)
     {

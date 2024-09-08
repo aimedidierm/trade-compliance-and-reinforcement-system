@@ -92,7 +92,15 @@
                 <tr>
                     <td class="py-2 px-4 border-b">{{$document->name}}</td>
                     <td class="py-2 px-4 border-b">{{$document->type}}</td>
-                    <td class="py-2 px-4 border-b">{{$document->status}}</td>
+                    <td class="py-2 px-4 border-b">
+                        @if ($document->status == \App\Enums\DocumentStatus::APPROVED->value)
+                        <span class="text-green-500">● Approved</span>
+                        @elseif ($document->status == \App\Enums\DocumentStatus::REJECTED->value)
+                        <span class="text-red-500">● Rejected</span>
+                        @else
+                        <span class="text-yellow-500">● Pending</span>
+                        @endif
+                    </td>
                     <td class="py-2 px-4 border-b"><a href="{{$document->src}}"
                             class="text-blue-500 hover:underline">click here</a>
                     </td>

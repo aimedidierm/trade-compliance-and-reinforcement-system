@@ -6,7 +6,7 @@
 
 <main class="container mx-auto py-8 px-6">
     <div class="flex justify-between items-center mb-4">
-        <div class="text-xl font-semibold">Sales Management</div>
+        <div class="text-xl font-semibold">Product Management</div>
         <div class="flex space-x-4">
             <button id="openFormBtn" class="px-4 py-2 bg-orange-500 hover:bg-orange-400 text-white rounded">Add
                 new</button>
@@ -15,19 +15,25 @@
             class="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50 transform translate-x-full opacity-0 transition-transform duration-300 ease-out pointer-events-none">
             <div class="bg-white p-6 rounded shadow-lg w-full max-w-md mx-auto">
                 <h2 class="text-2xl font-semibold mb-4">Add New Product</h2>
-                <form method="POST" action="/seller/products/sales" enctype="multipart/form-data">
+                <form method="POST" action="/seller/products" enctype="multipart/form-data">
                     @csrf
-                    <div class="mb-4">
-                        <label for="product" class="block text-sm font-medium text-gray-700">Product</label>
-                        <select name="product" id="product" class="mt-1 p-2 w-full border rounded">
-                            @foreach ($products as $product)
-                            <option value="{{$product->id}}">{{$product->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
                     <div class="mb-4">
                         <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
                         <input type="text" id="name" name="name" class="mt-1 p-2 w-full border rounded" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="invoice" class="block text-sm font-medium text-gray-700">Invoice</label>
+                        <input type="text" id="invoice" name="invoice" class="mt-1 p-2 w-full border rounded" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+                        <input type="number" id="price" name="price" class="mt-1 p-2 w-full border rounded" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="item-description"
+                            class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea id="item-description" name="description"
+                            class="mt-1 p-2 w-full border rounded"></textarea>
                     </div>
                     <div class="flex justify-between space-x-2">
                         <button type="button" id="closeFormBtn"
@@ -45,7 +51,6 @@
         </div>
     </div>
     <div class="flex gap-6 mb-8">
-
         <x-seller-products-navbar />
         <div class="w-full card">
             @if($errors->any())
@@ -79,48 +84,49 @@
             <table class="min-w-full bg-white">
                 <thead>
                     <tr>
-                        <th class="py-2 px-4 border-b">Sale name</th>
-                        <th class="py-2 px-4 border-b">Product</th>
+                        <th class="py-2 px-4 border-b">Product name</th>
+                        <th class="py-2 px-4 border-b">Product description</th>
                         <th class="py-2 px-4 border-b">Invoice</th>
                         <th class="py-2 px-4 border-b">Price</th>
-                        <th class="py-2 px-4 border-b">Status</th>
+                        <th class="py-2 px-4 border-b"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($sales as $sale)
-                    <td class="py-2 px-4 border-b">{{$sale->name}}</td>
-                    <td class="py-2 px-4 border-b">{{$sale->product->name}}</td>
-                    <td class="py-2 px-4 border-b">{{$sale->product->invoice}}</td>
-                    <td class="py-2 px-4 border-b">{{$sale->product->price}}</td>
-                    <td class="py-2 px-4 border-b">
-                        @if ($sale->status == \App\Enums\SaleStatus::DELIVERED->value)
-                        <span class="status-active">● Delivered</span>
-                        @elseif ($sale->status == \App\Enums\SaleStatus::SHIPPED->value)
-                        <span class="text-yellow-400">● Shipped</span>
-                        @else
-                        <span class="text-red-600">● Pending</span>
-                        @endif
-                    </td>
+                    @foreach ($products as $product)
+                    <tr>
+                        <td class="py-2 px-4 border-b">{{$product->name}}</td>
+                        <td class="py-2 px-4 border-b">{{$product->description}}</td>
+                        <td class="py-2 px-4 border-b">{{$product->invoice}}</td>
+                        <td class="py-2 px-4 border-b">{{$product->price}}</td>
+                        <td class="py-2 px-4 border-b">
+                            <form action="{{ route('seller.products.destroy', $product->id) }}" method="POST"
+                                onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded-lg">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
                     @endforeach
                 </tbody>
             </table>
             <div class="flex justify-between items-center mt-4">
-                @if ($sales->onFirstPage())
+                @if ($products->onFirstPage())
                 <span class="px-4 py-2 text-gray-500 bg-gray-200 rounded">← Previous</span>
                 @else
-                <a href="{{ $sales->previousPageUrl() }}" class="px-4 py-2 text-gray-500 bg-gray-200 rounded">←
+                <a href="{{ $products->previousPageUrl() }}" class="px-4 py-2 text-gray-500 bg-gray-200 rounded">←
                     Previous</a>
                 @endif
 
                 <div class="flex space-x-2">
-                    @foreach ($sales->links()->elements as $element)
+                    @foreach ($products->links()->elements as $element)
                     @if (is_string($element))
                     <span class="px-4 py-2 text-gray-500 bg-gray-200 rounded">{{ $element }}</span>
                     @endif
 
                     @if (is_array($element))
                     @foreach ($element as $page => $url)
-                    @if ($page == $sales->currentPage())
+                    @if ($page == $products->currentPage())
                     <span class="px-4 py-2 text-gray-500 bg-gray-200 rounded">{{ $page }}</span>
                     @else
                     <a href="{{ $url }}" class="px-4 py-2 text-gray-500 bg-gray-200 rounded">{{ $page }}</a>
@@ -130,8 +136,8 @@
                     @endforeach
                 </div>
 
-                @if ($sales->hasMorePages())
-                <a href="{{ $sales->nextPageUrl() }}" class="px-4 py-2 text-gray-500 bg-gray-200 rounded">Next →</a>
+                @if ($products->hasMorePages())
+                <a href="{{ $products->nextPageUrl() }}" class="px-4 py-2 text-gray-500 bg-gray-200 rounded">Next →</a>
                 @else
                 <span class="px-4 py-2 text-gray-500 bg-gray-200 rounded">Next →</span>
                 @endif

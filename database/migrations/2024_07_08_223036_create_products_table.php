@@ -17,7 +17,8 @@ return new class extends Migration
             $table->text('description');
             $table->string('invoice');
             $table->float('price')->default(0.00);
-            $table->string('document');
+            $table->unsignedBigInteger("user_id");
+            $table->foreign("user_id")->on("users")->references("id");
             $table->timestamps();
         });
     }

@@ -31,13 +31,13 @@
                     </span>
                     <span class="flex-1 ml-1 whitespace-nowrap">Training</span>
                 </a>
-                {{--<a href="/minicom/products"
-                    class="flex breadcrumb-item {{ request()->is('minicom/products') || request()->is('minicom/products/reporting') || request()->is('minicom/products/declaration') ? 'text-orange-400' : 'text-gray-500' }}">
+                <a href="/minicom/products"
+                    class="flex breadcrumb-item {{ request()->is('minicom/products') || request()->is('minicom/products/reporting') || request()->is('minicom/products/shipment') || request()->is('minicom/products/declaration') ? 'text-orange-400' : 'text-gray-500' }}">
                     <span class="material-symbols-outlined">
                         package_2
                     </span>
                     <span class="flex-1 ml-1 whitespace-nowrap">Product</span>
-                </a>--}}
+                </a>
             </nav>
             <div class="ml-6 flex items-center space-x-4">
                 <div id="notificationIcon" class="cursor-pointer p-2">

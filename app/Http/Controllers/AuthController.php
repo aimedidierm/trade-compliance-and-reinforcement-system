@@ -32,9 +32,9 @@ class AuthController extends Controller
                 if ($user->role == UserRole::SELLER->value) {
                     return redirect("/seller");
                 } elseif ($user->role == UserRole::EXPORTER->value) {
-                    return redirect("/exporter");
+                    return redirect("/exporter/products");
                 } elseif ($user->role == UserRole::MINICOM->value) {
-                    return redirect("/minicom");
+                    return redirect("/minicom/products");
                 } else {
                     return redirect(route('login'))->withErrors(['msg' => 'Invalid user role']);
                 }

@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\SaleStatus;
+use App\Enums\UserRole;
+use App\Http\Requests\SaleRequest;
+use App\Models\Product;
 use App\Models\Sale;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SaleController extends Controller
 {
@@ -12,23 +18,37 @@ class SaleController extends Controller
      */
     public function index()
     {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        if (Auth::user()->role == UserRole::MINICOM->value) {
+            $sales = Sale::latest()->paginate(10);
+            return view('minicom.product.sales', compact('sales'));
+        } else {
+            $products = Product::latest()->where('user_id', Auth::id())->get();
+            $sales = Sale::whereHas('product', function (Builder $query) {
+                $query->where('user_id', Auth::id());
+            })->latest()->paginate(10);
+            $sales->load('product');
+            return view('seller.product.sales', compact('sales', 'products'));
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(SaleRequest $request)
     {
-        //
+        $product = Product::find($request->input('product'));
+        if (!$product) {
+            return redirect('/seller/products/sales')->withErrors('Product not found');
+        }
+
+        Sale::create([
+            'name' => $request->input('name'),
+            'status' => SaleStatus::PENDING->value,
+            'product_id' => $request->input('product'),
+        ]);
+
+        return redirect('/seller/products/sales')->with('success', 'Sale created successfully.');
     }
 
     /**

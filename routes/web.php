@@ -1,10 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DeclarationController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ExportersController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SellersController;
+use App\Http\Controllers\ShipmentController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Middleware\ExporterMiddleware;
 use App\Http\Middleware\MinicomMiddleware;
@@ -34,6 +38,13 @@ Route::group(["prefix" => "seller", "as" => "seller.", 'middleware' => SellerMid
         return view('seller.training-details', ['src' => $training->src]);
     });
     Route::resource('/documents', DocumentController::class)->only('index', 'store', 'destroy');
+    Route::resource('/products', ProductController::class)->only('index', 'store', 'destroy');
+
+    Route::resource('/products/sales', SaleController::class)->only('index', 'store');
+    Route::get('/products/shipment', [ShipmentController::class, 'index']);
+    Route::get('products/shipment/{id}', [ShipmentController::class, 'pay']);
+    Route::view('/products/reporting', 'seller.product.reporting');
+    Route::get('/products/declaration', [DeclarationController::class, 'index']);
 });
 
 Route::group(["prefix" => "exporter", "as" => "exporter.", 'middleware' => ExporterMiddleware::class], function () {
@@ -47,6 +58,11 @@ Route::group(["prefix" => "exporter", "as" => "exporter.", 'middleware' => Expor
         return view('seller.training-details', ['src' => $training->src]);
     });
     Route::resource('/documents', DocumentController::class)->only('index');
+    Route::resource('/products', ShipmentController::class)->only('index', 'store');
+    Route::resource('/products/declaration', DeclarationController::class)->only('index', 'store');
+    Route::get('/products/declaration/ship/{id}', [DeclarationController::class, 'confirmShip']);
+    Route::get('/products/declaration/delivered/{id}', [DeclarationController::class, 'confirmDelivered']);
+    Route::view('/products/reporting', 'exporter.product.reporting');
 });
 
 Route::group(["prefix" => "minicom", "as" => "minicom.", 'middleware' => MinicomMiddleware::class], function () {
@@ -65,10 +81,10 @@ Route::group(["prefix" => "minicom", "as" => "minicom.", 'middleware' => Minicom
         $training = Training::find($id);
         return view('minicom.training-details', ['src' => $training->src]);
     });
-    Route::view('/products', 'minicom.product.sales');
+    Route::get('/products', [SaleController::class, 'index']);
     Route::view('/products/reporting', 'minicom.product.reporting');
-    Route::view('/products/declaration', 'minicom.product.declaration');
-    Route::view('/notifications', 'minicom.notifications');
+    Route::get('/products/declaration', [DeclarationController::class, 'index']);
+    Route::get('/products/shipment', [ShipmentController::class, 'index']);
     Route::view('/settings', 'auth.settings');
     Route::resource('/documents', DocumentController::class)->only('index');
     Route::get('/documents/approve/{id}', [DocumentController::class, 'approve']);

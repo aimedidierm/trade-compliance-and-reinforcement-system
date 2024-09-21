@@ -2,11 +2,11 @@
 
 @section('content')
 
-<x-seller-navbar />
+<x-exporter-navbar />
 
 <main class="container mx-auto py-8 px-6">
     <div class="flex justify-between items-center mb-4">
-        <div class="text-xl font-semibold">Sales Management</div>
+        <div class="text-xl font-semibold">Product Management</div>
         <div class="flex space-x-4">
             <button id="openFormBtn" class="px-4 py-2 bg-orange-500 hover:bg-orange-400 text-white rounded">Add
                 new</button>
@@ -14,20 +14,50 @@
         <div id="formContainer"
             class="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50 transform translate-x-full opacity-0 transition-transform duration-300 ease-out pointer-events-none">
             <div class="bg-white p-6 rounded shadow-lg w-full max-w-md mx-auto">
-                <h2 class="text-2xl font-semibold mb-4">Add New Product</h2>
-                <form method="POST" action="/seller/products/sales" enctype="multipart/form-data">
+                <h2 class="text-2xl font-semibold mb-4">Add New Shipment</h2>
+                <form method="POST" action="/exporter/products" enctype="multipart/form-data">
                     @csrf
-                    <div class="mb-4">
-                        <label for="product" class="block text-sm font-medium text-gray-700">Product</label>
-                        <select name="product" id="product" class="mt-1 p-2 w-full border rounded">
-                            @foreach ($products as $product)
-                            <option value="{{$product->id}}">{{$product->name}}</option>
+                    <div class="flex-1 gap-2 mb-4">
+                        <label for="sale" class="block text-sm font-medium text-gray-700">Sale</label>
+                        <select name="sale" id="sale" class="mt-1 p-2 w-full border rounded">
+                            @foreach ($sales as $sale)
+                            <option value="{{ $sale->id }}">{{ $sale->name }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="mb-4">
-                        <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                        <input type="text" id="name" name="name" class="mt-1 p-2 w-full border rounded" required>
+                    <div class="flex flex-wrap gap-4 mb-4">
+                        <div class="flex-1">
+                            <label for="packaging_number" class="block text-sm font-medium text-gray-700">Packaging
+                            </label>
+                            <input type="text" id="packaging_number" name="packaging_number"
+                                class="mt-1 p-2 w-full border rounded" placeholder="Enter packaging number" required>
+                        </div>
+                        <div class="flex-1">
+                            <label for="courier" class="block text-sm font-medium text-gray-700">Courier</label>
+                            <input type="text" id="courier" name="courier" class="mt-1 p-2 w-full border rounded"
+                                placeholder="Enter courier" required>
+                        </div>
+                        <div class="flex-1">
+                            <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                            <input type="text" id="address" name="address" class="mt-1 p-2 w-full border rounded"
+                                placeholder="Enter address" required>
+                        </div>
+                        <div class="flex-1">
+                            <label for="tracking" class="block text-sm font-medium text-gray-700">Tracking</label>
+                            <input type="text" id="tracking" name="tracking" class="mt-1 p-2 w-full border rounded"
+                                placeholder="Enter tracking number" required>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <div class="flex-1">
+                            <label for="ship_via" class="block text-sm font-medium text-gray-700">Ship Via</label>
+                            <input type="text" id="ship_via" name="ship_via" class="mt-1 p-2 w-full border rounded"
+                                placeholder="Enter ship via" required>
+                        </div>
+                        <div class="flex-1">
+                            <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+                            <input type="date" id="date" name="date" class="mt-1 p-2 w-full border rounded" required>
+                        </div>
                     </div>
                     <div class="flex justify-between space-x-2">
                         <button type="button" id="closeFormBtn"
@@ -35,7 +65,7 @@
                         <button type="submit"
                             class="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded flex items-center">
                             Save
-                            <span class="material-symbols-outlined">
+                            <span class="material-symbols-outlined ml-2">
                                 arrow_forward
                             </span>
                         </button>
@@ -46,8 +76,8 @@
     </div>
     <div class="flex gap-6 mb-8">
 
-        <x-seller-products-navbar />
-        <div class="w-full card">
+        <x-exporter-products-navbar />
+        <div class="card">
             @if($errors->any())
             <span style="color: red;">{{$errors->first()}}</span>
             @endif
@@ -79,48 +109,54 @@
             <table class="min-w-full bg-white">
                 <thead>
                     <tr>
-                        <th class="py-2 px-4 border-b">Sale name</th>
                         <th class="py-2 px-4 border-b">Product</th>
-                        <th class="py-2 px-4 border-b">Invoice</th>
-                        <th class="py-2 px-4 border-b">Price</th>
+                        <th class="py-2 px-4 border-b">Packaging Number</th>
+                        <th class="py-2 px-4 border-b">Currier</th>
+                        <th class="py-2 px-4 border-b">Ship Via</th>
+                        <th class="py-2 px-4 border-b">Date</th>
+                        <th class="py-2 px-4 border-b">Address</th>
+                        <th class="py-2 px-4 border-b">Tracking</th>
                         <th class="py-2 px-4 border-b">Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($sales as $sale)
-                    <td class="py-2 px-4 border-b">{{$sale->name}}</td>
-                    <td class="py-2 px-4 border-b">{{$sale->product->name}}</td>
-                    <td class="py-2 px-4 border-b">{{$sale->product->invoice}}</td>
-                    <td class="py-2 px-4 border-b">{{$sale->product->price}}</td>
-                    <td class="py-2 px-4 border-b">
-                        @if ($sale->status == \App\Enums\SaleStatus::DELIVERED->value)
-                        <span class="status-active">● Delivered</span>
-                        @elseif ($sale->status == \App\Enums\SaleStatus::SHIPPED->value)
-                        <span class="text-yellow-400">● Shipped</span>
-                        @else
-                        <span class="text-red-600">● Pending</span>
-                        @endif
-                    </td>
+                    @foreach ($shipments as $shipment)
+                    <tr>
+                        <td class="py-2 px-4 border-b">{{$shipment->sale->product->name}}</td>
+                        <td class="py-2 px-4 border-b">{{$shipment->packaging_number}}</td>
+                        <td class="py-2 px-4 border-b">{{$shipment->currier}}</td>
+                        <td class="py-2 px-4 border-b">{{$shipment->ship_via}}</td>
+                        <td class="py-2 px-4 border-b">{{$shipment->date}}</td>
+                        <td class="py-2 px-4 border-b">{{$shipment->address}}</td>
+                        <td class="py-2 px-4 border-b">{{$shipment->tracking_number}}</td>
+                        <td class="py-2 px-4 border-b">
+                            @if ($shipment->status == \App\Enums\ShipmentStatus::PAYED->value)
+                            <span class="status-active">Payed</span>
+                            @else
+                            <span class="text-red-600">Not Payed</span>
+                            @endif
+                        </td>
+                    </tr>
                     @endforeach
                 </tbody>
             </table>
             <div class="flex justify-between items-center mt-4">
-                @if ($sales->onFirstPage())
+                @if ($shipments->onFirstPage())
                 <span class="px-4 py-2 text-gray-500 bg-gray-200 rounded">← Previous</span>
                 @else
-                <a href="{{ $sales->previousPageUrl() }}" class="px-4 py-2 text-gray-500 bg-gray-200 rounded">←
+                <a href="{{ $shipments->previousPageUrl() }}" class="px-4 py-2 text-gray-500 bg-gray-200 rounded">←
                     Previous</a>
                 @endif
 
                 <div class="flex space-x-2">
-                    @foreach ($sales->links()->elements as $element)
+                    @foreach ($shipments->links()->elements as $element)
                     @if (is_string($element))
                     <span class="px-4 py-2 text-gray-500 bg-gray-200 rounded">{{ $element }}</span>
                     @endif
 
                     @if (is_array($element))
                     @foreach ($element as $page => $url)
-                    @if ($page == $sales->currentPage())
+                    @if ($page == $shipments->currentPage())
                     <span class="px-4 py-2 text-gray-500 bg-gray-200 rounded">{{ $page }}</span>
                     @else
                     <a href="{{ $url }}" class="px-4 py-2 text-gray-500 bg-gray-200 rounded">{{ $page }}</a>
@@ -130,8 +166,8 @@
                     @endforeach
                 </div>
 
-                @if ($sales->hasMorePages())
-                <a href="{{ $sales->nextPageUrl() }}" class="px-4 py-2 text-gray-500 bg-gray-200 rounded">Next →</a>
+                @if ($shipments->hasMorePages())
+                <a href="{{ $shipments->nextPageUrl() }}" class="px-4 py-2 text-gray-500 bg-gray-200 rounded">Next →</a>
                 @else
                 <span class="px-4 py-2 text-gray-500 bg-gray-200 rounded">Next →</span>
                 @endif

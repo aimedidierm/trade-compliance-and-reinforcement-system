@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\DeclarationStatus;
+use App\Enums\UserRole;
+use App\Http\Requests\DeclarationRequest;
 use App\Models\Declaration;
+use App\Models\Shipment;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DeclarationController extends Controller
 {
@@ -12,54 +18,57 @@ class DeclarationController extends Controller
      */
     public function index()
     {
-        //
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        if (Auth::user()->role == UserRole::EXPORTER->value) {
+            $declarations = Declaration::paginate(10);
+            $shipments = Shipment::latest()->get();
+            return view('exporter.product.declaration', compact('declarations', 'shipments'));
+        } else if (Auth::user()->role == UserRole::MINICOM->value) {
+            $declarations = Declaration::paginate(10);
+            return view('minicom.product.declaration', compact('declarations'));
+        } else {
+            $declarations = Declaration::whereHas('sale.product', function (Builder $query) {
+                $query->where('user_id', Auth::id());
+            })
+                ->with('sale')
+                ->latest()
+                ->paginate(10);
+            return view('seller.product.declaration', compact('declarations'));
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(DeclarationRequest $request)
     {
-        //
+        Declaration::create([
+            "address" => $request->input('address'),
+            "quantity" => $request->input('quantity'),
+            "price" => $request->input('price'),
+            "weight" => $request->input('weight'),
+            "status" => DeclarationStatus::PENDING->value,
+            "shipment_id" => $request->input('shipment'),
+        ]);
+
+        return redirect('/exporter/products/declaration')->with('success', 'Declaration created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Declaration $declaration)
+    public function confirmShip(string $id)
     {
-        //
+        $declaration = Declaration::find($id);
+        $declaration->status = DeclarationStatus::SHIPPED->value;
+        $declaration->update();
+
+        return redirect('/exporter/products/declaration')->with('success', 'Declaration updated successfully.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Declaration $declaration)
+    public function confirmDelivered(string $id)
     {
-        //
-    }
+        $declaration = Declaration::find($id);
+        $declaration->status = DeclarationStatus::DELIVERED->value;
+        $declaration->update();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Declaration $declaration)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Declaration $declaration)
-    {
-        //
+        return redirect('/exporter/products/declaration')->with('success', 'Declaration updated successfully.');
     }
 }

@@ -18,10 +18,8 @@ return new class extends Migration
             $table->float('price');
             $table->float('weight');
             $table->string('status');
-            $table->unsignedBigInteger("user_id");
-            $table->foreign("user_id")->on("users")->references("id");
-            $table->unsignedBigInteger("product_id");
-            $table->foreign("product_id")->on("products")->references("id");
+            $table->unsignedBigInteger("shipment_id");
+            $table->foreign("shipment_id")->on("shipments")->references("id");
             $table->timestamps();
         });
     }

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('status');
             $table->unsignedBigInteger("product_id");
             $table->foreign("product_id")->on("products")->references("id");
             $table->timestamps();

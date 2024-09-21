@@ -4,5 +4,6 @@ namespace App\Enums;
 
 enum ShipmentStatus: string
 {
-    case PENDING = 'pending';
+    case PAYED = 'payed';
+    case NOTPAYED = 'notPayed';
 }

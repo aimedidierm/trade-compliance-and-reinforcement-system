@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -12,54 +14,37 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $products = Product::latest()->where('user_id', Auth::id())->paginate(10);
+        return view('seller.product.products', compact('products'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        //
-    }
+        Product::create([
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+            'invoice' => $request->input('invoice'),
+            'price' => $request->input('price'),
+            'user_id' => Auth::id(),
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Product $product)
-    {
-        //
+        return redirect('/seller/products')->with('success', 'Product created');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy(string $id)
     {
-        //
+        $product = Product::find($id);
+        if ($product) {
+            $product->delete();
+            return redirect('/seller/products')->with('success', 'Product deleted successfully.');
+        } else {
+            return redirect('/seller/products')->withErrors('Product not found');
+        }
     }
 }

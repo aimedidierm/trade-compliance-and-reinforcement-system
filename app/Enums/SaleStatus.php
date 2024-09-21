@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum DeclarationStatus: string
+enum SaleStatus: string
 {
     case PENDING = 'pending';
     case SHIPPED = 'shipped';

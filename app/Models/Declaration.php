@@ -23,4 +23,9 @@ class Declaration extends Model
         'status',
         'shipment_id',
     ];
+
+    public function sale()
+    {
+        return $this->belongsTo(Sale::class);
+    }
 }

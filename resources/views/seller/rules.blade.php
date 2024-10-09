@@ -9,14 +9,14 @@
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h1 class="text-2xl font-semibold mb-4">Importing and Exporting</h1>
             <div class="space-y-4">
-                <p class="font-bold">Find information on:</p>
+                {{-- <p class="font-bold">Find information on:</p>
                 <ul class="list-disc list-inside space-y-1">
                     <li><a href="#" class="text-blue-500 underline">Electronic Single Window</a></li>
                     <li><a href="#" class="text-blue-500 underline">Import Procedures for Importation into Rwanda</a>
                     </li>
                     <li><a href="#" class="text-blue-500 underline">Customs clearance procedures
                             (http://rwanda.e-regulations.org/)</a></li>
-                </ul>
+                </ul> --}}
 
                 <p class="font-bold">Procedures for importing goods into Rwanda include the following steps:</p>
                 <ol class="list-decimal list-inside space-y-1">
@@ -30,9 +30,9 @@
                     <li>Obtain goods exit note</li>
                 </ol>
 
-                <p>In addition to documented and physical verification at border posts, importing taxpayers may be
+                {{-- <p>In addition to documented and physical verification at border posts, importing taxpayers may be
                     subject
-                    to <a href="#" class="text-blue-500 underline">Post-Clearance Audits (PCA)</a>.</p>
+                    to <a href="#" class="text-blue-500 underline">Post-Clearance Audits (PCA)</a>.</p> --}}
             </div>
         </div>
 

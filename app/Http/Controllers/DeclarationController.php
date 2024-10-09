@@ -27,12 +27,13 @@ class DeclarationController extends Controller
             $declarations = Declaration::paginate(10);
             return view('minicom.product.declaration', compact('declarations'));
         } else {
-            $declarations = Declaration::whereHas('sale.product', function (Builder $query) {
-                $query->where('user_id', Auth::id());
-            })
-                ->with('sale')
-                ->latest()
-                ->paginate(10);
+            $declarations = Declaration::paginate(10);
+            // $declarations = Declaration::whereHas('sale.product', function (Builder $query) {
+            //     $query->where('user_id', Auth::id());
+            // })
+            //     ->with('sale')
+            //     ->latest()
+            //     ->paginate(10);
             return view('seller.product.declaration', compact('declarations'));
         }
     }

@@ -84,6 +84,7 @@
                     <th class="py-2 px-4 border-b">Type</th>
                     <th class="py-2 px-4 border-b">Status</th>
                     <th class="py-2 px-4 border-b">Open</th>
+                    <th class="py-2 px-4 border-b">Comment</th>
                     <th class="py-2 px-4 border-b"></th>
                 </tr>
             </thead>
@@ -104,6 +105,9 @@
                     <td class="py-2 px-4 border-b"><a href="{{$document->src}}"
                             class="text-blue-500 hover:underline">click here</a>
                     </td>
+                    @if ($document->status == \App\Enums\DocumentStatus::REJECTED->value)
+                    <td class="py-2 px-4 border-b">{{$document->comment}}</td>
+                    @endif
                     <td class="py-2 px-4 border-b">
                         <form action="{{ route('seller.documents.destroy', $document->id) }}" method="POST"
                             onsubmit="return confirm('Are you sure you want to delete this document?');">

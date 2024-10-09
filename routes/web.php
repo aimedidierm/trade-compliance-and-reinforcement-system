@@ -88,5 +88,5 @@ Route::group(["prefix" => "minicom", "as" => "minicom.", 'middleware' => Minicom
     Route::view('/settings', 'auth.settings');
     Route::resource('/documents', DocumentController::class)->only('index');
     Route::get('/documents/approve/{id}', [DocumentController::class, 'approve']);
-    Route::get('/documents/reject/{id}', [DocumentController::class, 'reject']);
+    Route::post('/documents/reject/{id}', [DocumentController::class, 'reject']);
 });

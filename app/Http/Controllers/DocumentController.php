@@ -7,6 +7,7 @@ use App\Enums\UserRole;
 use App\Http\Requests\DocumentRequest;
 use App\Models\Document;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -71,11 +72,12 @@ class DocumentController extends Controller
     /**
      * Update the specified resource from storage.
      */
-    public function reject(string $id)
+    public function reject(string $id, Request $request)
     {
         $document = Document::find($id);
         if ($document) {
             $document->status = DocumentStatus::REJECTED->value;
+            $document->comment = $request->input('comment');
             $document->update();
             return redirect('/minicom/documents')->with('success', 'Document rejected successfully.');
         } else {

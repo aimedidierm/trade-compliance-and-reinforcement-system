@@ -71,15 +71,30 @@
                         <a type="button" href="/minicom/documents/approve/{{$document->id}}"
                             class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-2 py-1 text-center me-1 mb-1 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-red-900">Approve
                         </a>
-                        <a type="button" href="/minicom/documents/reject/{{$document->id}}"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-2 py-1 text-center me-1 mb-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">Reject
-                        </a>
+                        <button id="rejectButton"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-2 py-1 text-center me-1 mb-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                            Reject
+                        </button>
                     </td>
+                    @endif
+                    @if ($document->status == \App\Enums\DocumentStatus::REJECTED->value)
+                    <td class="py-2 px-4 border-b">{{$document->comment}}</td>
                     @endif
                 </tr>
                 @endforeach
             </tbody>
         </table>
+        <div id="rejectModal" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+                <h5 class="text-lg font-semibold mb-4">Add Comment for Rejection</h5>
+                <textarea id="comment" class="form-control border rounded w-full p-2"
+                    placeholder="Add your comment here..." rows="4"></textarea>
+                <div class="mt-4 flex justify-end">
+                    <button id="closeModal" class="bg-gray-300 text-gray-700 px-4 py-2 rounded mr-2">Close</button>
+                    <button id="submitReject" class="bg-blue-700 text-white px-4 py-2 rounded">Submit</button>
+                </div>
+            </div>
+        </div>
         <div class="flex justify-between items-center mt-4">
             @if ($documents->onFirstPage())
             <span class="px-4 py-2 text-gray-500 bg-gray-200 rounded">← Previous</span>
@@ -114,4 +129,48 @@
         </div>
     </div>
 </main>
+<script>
+    document.getElementById('rejectButton').addEventListener('click', function() {
+    document.getElementById('rejectModal').classList.remove('hidden');
+});
+
+document.getElementById('closeModal').addEventListener('click', function() {
+    document.getElementById('rejectModal').classList.add('hidden');
+});
+
+document.getElementById('submitReject').addEventListener('click', function() {
+    const comment = document.getElementById('comment').value;
+    const documentId = {{$document->id}};
+
+    if (comment.trim() === '') {
+        alert('Please enter a comment before submitting.');
+        return;
+    }
+
+    const data = {
+        comment: comment
+    };
+
+    fetch(`/minicom/documents/reject/${documentId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Comment submitted successfully.');
+            location.reload();
+        } else {
+            alert('There was an error submitting your comment.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+});
+</script>
 @stop

@@ -42,7 +42,7 @@ Route::group(["prefix" => "seller", "as" => "seller.", 'middleware' => SellerMid
 
     Route::resource('/products/sales', SaleController::class)->only('index', 'store');
     Route::get('/products/shipment', [ShipmentController::class, 'index']);
-    Route::get('products/shipment/{id}', [ShipmentController::class, 'pay']);
+    Route::get('products/shipment/{id}', [ShipmentController::class, 'pendingPay']);
     Route::view('/products/reporting', 'seller.product.reporting');
     Route::get('/products/declaration', [DeclarationController::class, 'index']);
 });
@@ -63,6 +63,7 @@ Route::group(["prefix" => "exporter", "as" => "exporter.", 'middleware' => Expor
     Route::get('/products/declaration/ship/{id}', [DeclarationController::class, 'confirmShip']);
     Route::get('/products/declaration/delivered/{id}', [DeclarationController::class, 'confirmDelivered']);
     Route::view('/products/reporting', 'exporter.product.reporting');
+    Route::get('products/approve-payment/{id}', [ShipmentController::class, 'approvePay']);
 });
 
 Route::group(["prefix" => "minicom", "as" => "minicom.", 'middleware' => MinicomMiddleware::class], function () {
@@ -82,9 +83,12 @@ Route::group(["prefix" => "minicom", "as" => "minicom.", 'middleware' => Minicom
         return view('minicom.training-details', ['src' => $training->src]);
     });
     Route::get('/products', [SaleController::class, 'index']);
+    Route::post('/products/report', [SaleController::class, 'report']);
     Route::view('/products/reporting', 'minicom.product.reporting');
     Route::get('/products/declaration', [DeclarationController::class, 'index']);
+    Route::post('/products/declaration/report', [DeclarationController::class, 'report']);
     Route::get('/products/shipment', [ShipmentController::class, 'index']);
+    Route::post('/products/shipment/report', [ShipmentController::class, 'report']);
     Route::view('/settings', 'auth.settings');
     Route::resource('/documents', DocumentController::class)->only('index');
     Route::get('/documents/approve/{id}', [DocumentController::class, 'approve']);

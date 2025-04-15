@@ -132,7 +132,12 @@
                         <td class="py-2 px-4 border-b">
                             @if ($shipment->status == \App\Enums\ShipmentStatus::PAYED->value)
                             <span class="status-active">Payed</span>
-                            @else
+                            @elseif ($shipment->status == \App\Enums\ShipmentStatus::PENDINGPAYED->value)
+                            <a type="button" href="/exporter/products/approve-payment/{{$shipment->id}}"
+                                class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-2 py-1 text-center me-1 mb-1 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-red-900">Approve
+                                Payment
+                            </a>
+                            @elseif($shipment->status == \App\Enums\ShipmentStatus::NOTPAYED->value)
                             <span class="text-red-600">Not Payed</span>
                             @endif
                         </td>

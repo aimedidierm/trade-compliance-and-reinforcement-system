@@ -28,4 +28,9 @@ class Declaration extends Model
     {
         return $this->belongsTo(Sale::class);
     }
+
+    public function shipment()
+    {
+        return $this->belongsTo(Shipment::class);
+    }
 }

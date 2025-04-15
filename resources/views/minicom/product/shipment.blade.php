@@ -4,7 +4,40 @@
 <x-minicom-navbar />
 <main class="container mx-auto py-8 px-6">
     <div class="flex justify-between items-center mb-4">
-        <div class="text-xl font-semibold">Product Shipments</div>
+        <div class="text-xl font-semibold">Product Shipments</div><button id="openFormBtn"
+            class="px-4 py-2 bg-orange-500 hover:bg-orange-400 text-white rounded">Generate
+            Report</button>
+        <div id="formContainer"
+            class="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50 transform translate-x-full opacity-0 transition-transform duration-300 ease-out pointer-events-none">
+            <div class="bg-white p-6 rounded shadow-lg w-full max-w-md mx-auto">
+                <h2 class="text-2xl font-semibold mb-4">Select report details</h2>
+                <form method="POST" action="/minicom/products/shipment/report" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date:</label>
+                        <input type="date" id="start_date" name="start_date" class="mt-1 p-2 w-full border rounded"
+                            required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="end_date" class="block text-sm font-medium text-gray-700">End Date:</label>
+                        <input type="date" id="end_date" name="end_date" class="mt-1 p-2 w-full border rounded"
+                            required>
+                    </div>
+
+                    <div class="flex justify-between space-x-2">
+                        <button type="button" id="closeFormBtn"
+                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded">Cancel</button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-black hover:bg-gray-800 text-white rounded flex items-center">
+                            Save
+                            <span class="material-symbols-outlined">
+                                arrow_forward
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
     <div class="flex gap-6 mb-8">
 
@@ -79,4 +112,28 @@
         </div>
     </div>
 </main>
+<script>
+    document.getElementById('openFormBtn').addEventListener('click', function() {
+        const formContainer = document.getElementById('formContainer');
+        formContainer.classList.remove('translate-x-full', 'opacity-0', 'pointer-events-none');
+        formContainer.classList.add('translate-x-0', 'opacity-100', 'pointer-events-auto');
+    });
+
+    document.getElementById('closeFormBtn').addEventListener('click', function() {
+        const formContainer = document.getElementById('formContainer');
+        formContainer.classList.remove('translate-x-0', 'opacity-100', 'pointer-events-auto');
+        formContainer.classList.add('translate-x-full', 'opacity-0', 'pointer-events-none');
+    });
+
+    // Optional: Close form when clicking outside the form content
+    document.addEventListener('click', function(event) {
+        const formContainer = document.getElementById('formContainer');
+        const formContent = formContainer.querySelector('div');
+
+        if (!formContent.contains(event.target) && !event.target.closest('#openFormBtn')) {
+            formContainer.classList.remove('translate-x-0', 'opacity-100', 'pointer-events-auto');
+            formContainer.classList.add('translate-x-full', 'opacity-0', 'pointer-events-none');
+        }
+    });
+</script>
 @stop

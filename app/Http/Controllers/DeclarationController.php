@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Enums\DeclarationStatus;
 use App\Enums\UserRole;
 use App\Http\Requests\DeclarationRequest;
+use App\Http\Requests\ReportRequest;
 use App\Models\Declaration;
 use App\Models\Shipment;
+use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DeclarationController extends Controller
 {
@@ -71,5 +74,29 @@ class DeclarationController extends Controller
         $declaration->update();
 
         return redirect('/exporter/products/declaration')->with('success', 'Declaration updated successfully.');
+    }
+
+
+    public function report(ReportRequest $request)
+    {
+        $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
+        $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
+
+        $declarations = Declaration::latest()
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->with('shipment.sale.product.user')
+            ->get();
+
+        $data = [
+            'declarations' => $declarations,
+            'start_date' => $startDate->format('Y-m-d'),
+            'end_date' => $endDate->format('Y-m-d'),
+            'printed_date' => now()->format('Y-m-d H:i:s'),
+        ];
+
+        $pdf = Pdf::loadView('reports.declaration', $data)
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download("declaration_report.pdf");
     }
 }

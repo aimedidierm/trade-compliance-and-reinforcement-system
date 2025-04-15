@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Enums\SaleStatus;
 use App\Enums\UserRole;
+use App\Http\Requests\ReportRequest;
 use App\Http\Requests\SaleRequest;
 use App\Models\Product;
 use App\Models\Sale;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SaleController extends Controller
 {
@@ -81,5 +84,28 @@ class SaleController extends Controller
     public function destroy(Sale $sale)
     {
         //
+    }
+
+    public function report(ReportRequest $request)
+    {
+        $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
+        $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
+
+        $sales = Sale::latest()
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->with('product.user')
+            ->get();
+
+        $data = [
+            'sales' => $sales,
+            'start_date' => $startDate->format('Y-m-d'),
+            'end_date' => $endDate->format('Y-m-d'),
+            'printed_date' => now()->format('Y-m-d H:i:s'),
+        ];
+
+        $pdf = Pdf::loadView('reports.sales', $data)
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download("sale_report.pdf");
     }
 }

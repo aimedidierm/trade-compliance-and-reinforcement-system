@@ -70,7 +70,6 @@ Route::group(["prefix" => "minicom", "as" => "minicom.", 'middleware' => Minicom
     Route::get('/', function () {
         return "Welcom minicom";
     });
-    Route::view('/documents', 'minicom.documents');
     Route::get('/users', [ExportersController::class, 'index']);
     Route::get('/users/delete/{id}', [ExportersController::class, 'destroy']);
     Route::get('/users/reject/{id}', [ExportersController::class, 'reject']);
